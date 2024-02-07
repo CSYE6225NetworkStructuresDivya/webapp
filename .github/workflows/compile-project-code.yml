@@ -18,6 +18,7 @@ jobs:
         with:
           java-version: '17'
           java-package: 'jre'
+          distribution: 'temurin'
 
       - name: Run maven compile
         run: ./mvnw compile
