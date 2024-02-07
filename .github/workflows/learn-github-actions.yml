@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 jobs:
   check-bats-version:
     runs-on: ubuntu-latest
