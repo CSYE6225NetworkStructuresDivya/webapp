@@ -6,3 +6,4 @@
 
 ## Prerequisites:
 Download a mysql database and set it up correctly in application.properties file
+test
