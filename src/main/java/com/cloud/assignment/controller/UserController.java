@@ -3,6 +3,7 @@ package com.cloud.assignment.controller;
 import com.cloud.assignment.entity.User;
 import com.cloud.assignment.service.UserService;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,15 @@ public class UserController {
                         HttpStatus.BAD_REQUEST
                 );
 
+            //check if password is an empty string
+            if(password.isEmpty()) {
+                return new ResponseEntity<>(
+                        "Password cannot be empty",
+                        httpHeaders,
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+
             //check if user already exists
             User u = userService.getUserByUsername(username);
             if(u != null)
@@ -82,8 +92,17 @@ public class UserController {
     }
 
     @GetMapping("/v1/user/self")
-    public ResponseEntity<Object> getUser(Authentication authentication) {
-        //if password is wrong throw an error - look if you can send a custom response
+    public ResponseEntity<Object> getUser(Authentication authentication,
+                                          HttpServletRequest httpServletRequest,
+                                          @RequestParam Map<String, String> params) {
+        //if payload return error
+        if(httpServletRequest.getContentLength() > 0 || !params.isEmpty())
+            return new ResponseEntity<>(
+                    "Invalid Request: No payload or request params accepted",
+                    httpHeaders,
+                    HttpStatus.BAD_REQUEST
+            );
+
         return ResponseEntity.ok().headers(httpHeaders).body(userService.getUser(authentication.getName()));
     }
 
