@@ -36,13 +36,21 @@ jobs:
         run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
 
       - name: Install maven dependencies
-        run: mvn clean
+        run: mvn clean install -DskipTests=true
 
-      - name: Start server
-        run: mvn spring-boot:run
+  integration-tests:
+    needs: setup
+    runs-on: ubuntu-latest
 
-      - name: Wait for springboot application to start
-        run: sleep 20s
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Run integration tests
         run: mvn test
