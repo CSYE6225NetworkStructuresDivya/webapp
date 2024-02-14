@@ -29,14 +29,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install maven dependencies
-        run: mvn clean package
-
       - name: Wait for SQL to start
         run: sleep 10s
 
       - name: Run MySQL to create database
         run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
+
+      - name: Install maven dependencies
+        run: mvn clean
 
       - name: Start server
         run: mvn spring-boot:run
