@@ -43,8 +43,5 @@ jobs:
         env:
           DATABASE_URL: mysql://root@localhost:3306/cloud_assignment
 
-      - name: Stop MySQL
-        run: mysqladmin -h localhost shutdown
-
       - name: Stop application
         run: pkill -f "java -jar"
