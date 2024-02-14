@@ -42,6 +42,3 @@ jobs:
         run: mvn spring-boot:run -Dspring-boot.run.profiles=test & sleep 10s && mvn test
         env:
           DATABASE_URL: mysql://root@localhost:3306/cloud_assignment
-
-      - name: Stop application
-        run: pkill -f "java -jar"
