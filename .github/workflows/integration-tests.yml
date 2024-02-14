@@ -38,6 +38,12 @@ jobs:
       - name: Run MySQL to create database
         run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
 
+      - name: Start server
+        run: mvn spring-boot:run
+
+      - name: Wait for springboot application to start
+        run: sleep 20s
+
       - name: Run integration tests
         run: mvn test
         env:
