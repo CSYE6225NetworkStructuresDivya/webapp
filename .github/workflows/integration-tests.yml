@@ -32,8 +32,11 @@ jobs:
       - name: Install maven dependencies
         run: mvn clean package
 
+      - name: Wait for SQL to start
+        run: sleep 10s
+
       - name: Run MySQL to create database
-        run: mysql -h localhost -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
+        run: mysql -h 127.0.0.1 -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
 
       - name: Run integration tests
         run: mvn test
