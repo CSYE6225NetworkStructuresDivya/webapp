@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  compile:
+  setup:
     runs-on: ubuntu-latest
 
     services:
