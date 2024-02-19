@@ -29,7 +29,7 @@ public class UserControllerIntegrationTest {
                 .body(requestBody)
                 .post("/v1/user");
 
-        assertEquals(200, postResponse.getStatusCode());
+        assertEquals(201, postResponse.getStatusCode());
         assertEquals("test@example.com", postResponse.getBody().jsonPath().get("username"));
 
         Response getResponse = RestAssured.given()
