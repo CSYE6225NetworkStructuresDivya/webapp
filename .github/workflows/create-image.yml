@@ -4,6 +4,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+env:
+  PRODUCT_VERSION: "latest"
 
 jobs:
   build-and-deploy:
@@ -34,3 +36,15 @@ jobs:
 
       - name: Build package
         run: mvn clean package
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: ${{ env.PRODUCT_VERSION }}
+
+      - name: Validate Packer Template
+        run: packer validate ./packer/compute-mi.pkr.hcl
+
+      - name: Validate Packer Template
+        run: packer build ./packer/compute-mi.pkr.hcl
