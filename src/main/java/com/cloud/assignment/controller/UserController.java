@@ -85,7 +85,11 @@ public class UserController {
             user.setUsername(username);
             user.setPassword(bCryptPasswordEncoder.encode(password));
 
-            return ResponseEntity.ok().headers(httpHeaders).body(userService.createUser(user));
+            return new ResponseEntity<>(
+                    userService.createUser(user),
+                    httpHeaders,
+                    HttpStatus.CREATED
+            );
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

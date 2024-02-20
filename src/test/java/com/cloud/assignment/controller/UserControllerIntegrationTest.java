@@ -1,8 +1,10 @@
 package com.cloud.assignment.controller;
 
+import com.cloud.assignment.AssignmentApplication;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,15 +13,24 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {AssignmentApplication.class})
 public class UserControllerIntegrationTest {
+
+    private static String userIdentifier;
+
+    @BeforeEach
+    public void setUp() {
+        if (userIdentifier == null) {
+            userIdentifier = "testUser" + System.currentTimeMillis();
+        }
+    }
 
     @Test
     public void test1() {
         RestAssured.baseURI = "http://localhost:8080";
 
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("username", "test@example.com");
+        requestBody.put("username", this.userIdentifier + "@example.com");
         requestBody.put("password", "password");
         requestBody.put("first_name", "Test");
         requestBody.put("last_name", "User");
@@ -29,15 +40,15 @@ public class UserControllerIntegrationTest {
                 .body(requestBody)
                 .post("/v1/user");
 
-        assertEquals(200, postResponse.getStatusCode());
-        assertEquals("test@example.com", postResponse.getBody().jsonPath().get("username"));
+        assertEquals(201, postResponse.getStatusCode());
+        assertEquals(this.userIdentifier + "@example.com", postResponse.getBody().jsonPath().get("username"));
 
         Response getResponse = RestAssured.given()
-                .auth().basic("test@example.com", "password")
+                .auth().basic(this.userIdentifier + "@example.com", "password")
                 .get("/v1/user/self");
 
         assertEquals(200, getResponse.getStatusCode());
-        assertEquals("test@example.com", getResponse.getBody().jsonPath().get("username"));
+        assertEquals(this.userIdentifier + "@example.com", getResponse.getBody().jsonPath().get("username"));
     }
 
     @Test
@@ -49,7 +60,7 @@ public class UserControllerIntegrationTest {
 
         // Send PUT request to update user data
         Response putResponse = RestAssured.given()
-                .auth().basic("test@example.com", "password")
+                .auth().basic(this.userIdentifier + "@example.com", "password")
                 .contentType(ContentType.JSON)
                 .body(requestBody)
                 .put("/v1/user/self");
@@ -57,7 +68,7 @@ public class UserControllerIntegrationTest {
         assertEquals(204, putResponse.getStatusCode());
 
         Response getResponse = RestAssured.given()
-                .auth().basic("test@example.com", "password")
+                .auth().basic(this.userIdentifier + "@example.com", "password")
                 .get("/v1/user/self");
 
         assertEquals(200, getResponse.getStatusCode());

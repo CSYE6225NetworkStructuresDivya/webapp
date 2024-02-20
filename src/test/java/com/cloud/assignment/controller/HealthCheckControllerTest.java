@@ -1,11 +1,14 @@
 package com.cloud.assignment.controller;
 
+import com.cloud.assignment.AssignmentApplication;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static io.restassured.RestAssured.given;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {AssignmentApplication.class})
 public class HealthCheckControllerTest {
 
     @BeforeEach

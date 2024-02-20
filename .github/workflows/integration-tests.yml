@@ -36,9 +36,9 @@ jobs:
         run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
 
       - name: Install maven dependencies
-        run: mvn clean install -DskipTests=true
+        run: mvn clean install -DskipTests=true                     
 
       - name: Run application and test api's
-        run: mvn spring-boot:run -Dspring-boot.run.profiles=test & sleep 10s && mvn test
+        run: mvn test
         env:
           DATABASE_URL: mysql://root@localhost:3306/cloud_assignment
