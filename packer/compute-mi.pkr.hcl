@@ -43,20 +43,20 @@ source "googlecompute" "centOS" {
 build {
   sources = ["source.googlecompute.centOS"]
 
-    provisioner "shell" {
-      script = "../scripts/update-script.sh"
-    }
-
-    provisioner "file" {
-      source      = "../target/assignment-0.0.1-SNAPSHOT.jar"
-      destination = "/tmp/"
-    }
-
-    provisioner "shell" {
-      script = "../scripts/java-sql-script.sh"
-    }
-
-    provisioner "shell" {
-      scripts = ["../scripts/run-jar.sh"]
-    }
+#    provisioner "shell" {
+#      script = "../scripts/update-script.sh"
+#    }
+#
+#    provisioner "file" {
+#      source      = "../target/assignment-0.0.1-SNAPSHOT.jar"
+#      destination = "/tmp/"
+#    }
+#
+#    provisioner "shell" {
+#      script = "../scripts/java-sql-script.sh"
+#    }
+#
+#    provisioner "shell" {
+#      scripts = ["../scripts/run-jar.sh"]
+#    }
 }
