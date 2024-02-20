@@ -1,0 +1,25 @@
+name: Run Packer Tests
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  packer-commands:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Packer
+        uses: hashicorp/setup-packer@v2
+        with:
+          packer_version: 1.7.4
+
+      - name: Format Packer Template
+        run: cd packer & packer fmt compute-mi.pkr.hcl
+
+      - name: Validate Packer Template
+        run: packer validate compute-mi.pkr.hcl
