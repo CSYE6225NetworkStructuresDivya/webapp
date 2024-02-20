@@ -4,6 +4,8 @@ on:
     branches:
       - main
   workflow_dispatch:
+env:
+  PRODUCT_VERSION: "latest"
 
 jobs:
   packer-commands:
@@ -14,12 +16,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Packer
-        uses: hashicorp/setup-packer@v2
+        uses: hashicorp/setup-packer@main
+        id: setup
         with:
-          packer_version: 1.7.4
+          version: ${{ env.PRODUCT_VERSION }}
 
       - name: Format Packer Template
-        run: cd packer & packer fmt compute-mi.pkr.hcl
+        run: packer fmt ./packer/compute-mi.pkr.hcl
 
       - name: Validate Packer Template
-        run: packer validate compute-mi.pkr.hcl
+        run: packer validate ./packer/compute-mi.pkr.hcl
