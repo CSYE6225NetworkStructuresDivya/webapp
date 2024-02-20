@@ -21,6 +21,9 @@ jobs:
         with:
           version: ${{ env.PRODUCT_VERSION }}
 
+      - name: Run Packer INIT
+        run: packer init ./packer/compute-mi.pkr.hcl
+
       - name: Format Packer Template
         run: packer fmt ./packer/compute-mi.pkr.hcl
 
