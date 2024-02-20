@@ -1,0 +1,47 @@
+name: Create Machine Image
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: centos-8
+    services:
+      mysql:
+        image: mysql:latest
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+          MYSQL_DATABASE: cloud_assignment
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'openjdk'
+
+      - name: Run MySQL to create database
+        run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
+
+      - name: Install unzip
+        run: sudo yum install -y unzip
+
+      - name: Install packer
+        run: |
+          wget https://releases.hashicorp.com/packer/1.7.4/packer_1.7.4_linux_amd64.zip
+          unzip packer_1.7.4_linux_amd64.zip
+          sudo mv packer /usr/local/bin
+          packer --version
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Build maven package
+        run: mvn clean package
+        env:
+          DATABASE_URL: mysql://root@localhost:3306/cloud_assignment
