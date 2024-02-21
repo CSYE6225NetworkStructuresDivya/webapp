@@ -44,18 +44,18 @@ build {
   sources = ["source.googlecompute.centOS"]
 
   provisioner "shell" {
-    script = "../scripts/update-script.sh"
+    script = "scripts/update-script.sh"
   }
 
   provisioner "file" {
     sources = [
-      "../target/assignment-0.0.1-SNAPSHOT.jar",
-      "../scripts/application-start.service"
+      "target/assignment-0.0.1-SNAPSHOT.jar",
+      "scripts/application-start.service"
     ]
     destination = "/tmp/"
   }
 
   provisioner "shell" {
-    script = "../scripts/run-script.sh"
+    script = "scripts/run-script.sh"
   }
 }
