@@ -1,4 +1,4 @@
-name: Create Machine Image
+name: Check packer configuration
 on:
   pull_request:
     branches:
@@ -8,7 +8,7 @@ env:
   PRODUCT_VERSION: "latest"
 
 jobs:
-  build-and-deploy:
+  packer-test:
     runs-on: ubuntu-latest
 
     services:
@@ -48,9 +48,3 @@ jobs:
 
       - name: Format Packer Template
         run: packer fmt ./packer/compute-mi.pkr.hcl
-
-#      - name: Validate Packer Template
-#        run: packer validate ./packer/compute-mi.pkr.hcl
-#
-#      - name: Validate Packer Template
-#        run: packer build ./packer/compute-mi.pkr.hcl
