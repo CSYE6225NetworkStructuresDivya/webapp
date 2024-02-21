@@ -42,9 +42,6 @@ jobs:
       - name: Use gcloud CLI
         run: gcloud info
 
-      - name: Use gcloud to authenticate
-        run: gcloud auth activate-service-account --key-file=${{ env.GCLOUD_CRED }}
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
