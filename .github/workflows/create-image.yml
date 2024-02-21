@@ -11,7 +11,7 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     env:
-      GCLOUD_CREDS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      GCLOUD_CRED: ${{ secrets.GCP_CREDENTIALS }}
     services:
       mysql:
         image: mysql:latest
@@ -26,6 +26,22 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      - name: Set up gcloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ env.GCLOUD_CRED }}
+
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          version: '>= 363.0.0'
+
+      - name: Use gcloud CLI
+        run: gcloud info
+
+      - name: Use gcloud to authenticate
+        run: gcloud auth activate-service-account --key-file=${{ env.GCLOUD_CRED }}
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -37,22 +53,6 @@ jobs:
 
       - name: Build package
         run: mvn clean package
-
-      - name: Set up gcloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ env.GCLOUD_CREDS }}
-
-      - name: Setup Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          version: '>= 363.0.0'
-
-      - name: Use gcloud CLI
-        run: gcloud info
-
-      - name: Use gcloud to authenticate
-        run: gcloud auth activate-service-account --key-file=${{ env.GCLOUD_CREDS }}
 
       - name: Set up Packer
         uses: hashicorp/setup-packer@main
