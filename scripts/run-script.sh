@@ -4,6 +4,7 @@
 sudo mkdir -p /opt/csye6225
 sudo mv /tmp/assignment-0.0.1-SNAPSHOT.jar /opt/csye6225/assignment-0.0.1-SNAPSHOT.jar
 sudo mv /tmp/application-start.service /etc/systemd/system/
+sudo chmod +x /etc/systemd/system/application-start.service
 echo "########################### Files moved ########################### "
 
 # Check if the JAR file exists

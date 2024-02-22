@@ -1,8 +1,8 @@
 name: Create Machine Image
 on:
-  pull_request: #
-    branches: #type { closed, opened, reopened }
-      - main
+  pull_request:
+    types:
+      - closed
   workflow_dispatch:
 env:
   PRODUCT_VERSION: "latest"
