@@ -1,7 +1,7 @@
 name: Create Machine Image
 on:
-  pull_request:
-    branches:
+  pull_request: #
+    branches: #type { closed, opened, reopened }
       - main
   workflow_dispatch:
 env:
@@ -25,9 +25,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Check credentials
-        run: echo $GCLOUD_CRED
 
       - name: Set up gcloud
         uses: google-github-actions/auth@v2
@@ -69,5 +66,5 @@ jobs:
       - name: Validate Packer Template
         run: packer validate ./packer/compute-mi.pkr.hcl
 
-      - name: Validate Packer Template
+      - name: Build Packer Template
         run: packer build ./packer/compute-mi.pkr.hcl
