@@ -43,9 +43,9 @@ source "googlecompute" "centOS" {
 build {
   sources = ["source.googlecompute.centOS"]
 
-  provisioner "shell" {
-    script = "scripts/update-script.sh"
-  }
+#  provisioner "shell" {
+#    script = "scripts/update-script.sh"
+#  }
 
   provisioner "file" {
     sources = [

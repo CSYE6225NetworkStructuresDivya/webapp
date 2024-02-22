@@ -1,7 +1,8 @@
 [Unit]
 Description=Starts the application
 ConditionPathExists=/opt/csye6225/assignment-0.0.1-SNAPSHOT.jar
-After=network.target
+Requires=cloud-init.service
+After=cloud-final.service
 
 [Service]
 Type=simple
@@ -10,10 +11,11 @@ Group=csye6225
 WorkingDirectory=/opt/csye6225
 ExecStart=/usr/bin/java -jar /opt/csye6225/assignment-0.0.1-SNAPSHOT.jar
 Restart=always
-RestartSec=3
+RestartSec=5s
+TimeoutSec=10s
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=csye6225
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=cloud-init.target
