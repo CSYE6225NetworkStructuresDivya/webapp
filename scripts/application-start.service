@@ -1,8 +1,7 @@
 [Unit]
 Description=Starts the application
 ConditionPathExists=/opt/csye6225/assignment-0.0.1-SNAPSHOT.jar
-Requires=cloud-init.service
-After=cloud-final.service
+After=network.target
 
 [Service]
 Type=simple
@@ -18,4 +17,4 @@ StandardError=syslog
 SyslogIdentifier=csye6225
 
 [Install]
-WantedBy=cloud-init.target
+WantedBy=multi-user.target
