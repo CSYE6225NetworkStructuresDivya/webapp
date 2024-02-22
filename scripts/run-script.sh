@@ -14,6 +14,14 @@ else
     exit 1
 fi
 
+# Check if the JAR file exists
+if [ -f "/etc/systemd/system/application-start.service" ]; then
+    echo "########################### Service file exixts ########################### "
+else
+    echo "########################### Service file not found ########################### "
+    exit 1
+fi
+
 # Create user csye6225
 sudo groupadd csye6225
 sudo useradd -s /bin/false -g csye6225 -d /opt/csye6225 -m csye6225
