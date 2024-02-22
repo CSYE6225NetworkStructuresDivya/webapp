@@ -37,6 +37,7 @@ sudo yum -y install java-17-openjdk-devel
 echo "########################### Java Development Kit installed ########################### "
 echo $JAVA_HOME
 java -version
+which java
 
 # Install MySQL
 sudo yum install -y mysql-server
