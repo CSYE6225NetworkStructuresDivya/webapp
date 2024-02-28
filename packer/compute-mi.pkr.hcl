@@ -9,7 +9,7 @@ packer {
 
 variable "project_id" {
   description = "The project ID to deploy to"
-    type        = string
+  type        = string
   default     = "cloud-csye-6225"
 }
 
