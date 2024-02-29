@@ -47,4 +47,7 @@ jobs:
         run: packer init ./packer/compute-mi.pkr.hcl
 
       - name: Format Packer Template
-        run: packer fmt ./packer/compute-mi.pkr.hcl
+        run: packer fmt -check ./packer/compute-mi.pkr.hcl
+
+      - name: Validate Packer Template
+        run: packer validate ./packer/compute-mi.pkr.hcl

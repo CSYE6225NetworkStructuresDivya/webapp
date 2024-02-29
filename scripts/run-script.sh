@@ -41,23 +41,6 @@ echo $JAVA_HOME
 java -version
 which java
 
-# Install MySQL
-sudo yum install -y mysql-server
-sudo systemctl start mysqld
-sudo systemctl enable mysqld
-echo "########################### MySQL installed and started ########################### "
-
-# Create a database
-mysql -u root -p -e "CREATE DATABASE IF NOT EXISTS cloud_assignment;"
-
-# Check if the command executed successfully
-if [ $? -eq 0 ]; then
-  echo "########################### Database created ########################### "
-else
-  echo "########################### Failed to create database ########################### "
-  exit 1
-fi
-
 # Enable and start the application
 #sudo java -jar /opt/csye6225/assignment-0.0.1-SNAPSHOT.jar
 sudo systemctl daemon-reload

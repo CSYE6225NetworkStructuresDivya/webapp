@@ -47,9 +47,6 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Run MySQL to create database
-        run: mysql -h 127.0.0.1 -u root --password="" -e "CREATE DATABASE IF NOT EXISTS cloud_assignment"
-
       - name: Build package
         run: mvn clean package
 
@@ -63,7 +60,7 @@ jobs:
         run: packer init ./packer/compute-mi.pkr.hcl
 
       - name: Format Packer Template
-        run: packer fmt ./packer/compute-mi.pkr.hcl
+        run: packer fmt -check ./packer/compute-mi.pkr.hcl
 
       - name: Validate Packer Template
         run: packer validate ./packer/compute-mi.pkr.hcl
