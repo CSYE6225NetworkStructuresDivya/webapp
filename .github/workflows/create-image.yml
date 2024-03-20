@@ -11,6 +11,7 @@ env:
 
 jobs:
   build-and-deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     env:
       GCLOUD_CRED: ${{ secrets.GCP_CREDENTIALS }}

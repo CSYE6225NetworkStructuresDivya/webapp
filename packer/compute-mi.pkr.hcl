@@ -50,7 +50,8 @@ build {
   provisioner "file" {
     sources = [
       "target/assignment-0.0.1-SNAPSHOT.jar",
-      "scripts/application-start.service"
+      "scripts/application-start.service",
+      "scripts/config.yaml"
     ]
     destination = "/tmp/"
   }
