@@ -45,7 +45,13 @@ public class UserService implements UserDetailsService {
             logger.error("Error updating user in database: " + e);
             throw new Exception(e);
         }
+    }
 
+    public User setUserVerified(String username) {
+        User user = userRepository.findByUsername(username);
+        user.setVerified(true);
+        userRepository.save(user);
+        return user;
     }
 
     @Override

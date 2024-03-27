@@ -23,12 +23,14 @@ public class UserController {
     private final UserService userService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private HttpHeaders httpHeaders;
+    private final PubSubPublisher pubSubPublisher;
 
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public UserController(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserController(UserService userService, BCryptPasswordEncoder bCryptPasswordEncoder, PubSubPublisher pubSubPublisher) {
         this.userService = userService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.pubSubPublisher = pubSubPublisher;
     }
 
     @PostConstruct
@@ -102,6 +104,7 @@ public class UserController {
             user.setPassword(bCryptPasswordEncoder.encode(password));
 
             logger.info("Creating user: " + user.toString());
+            pubSubPublisher.publishMessage(username);
 
             return new ResponseEntity<>(
                     userService.createUser(user),
@@ -130,17 +133,38 @@ public class UserController {
             );
         }
 
-        User userResponse = userService.getUser(authentication.getName());
-        logger.info("User found: " + userResponse.toString());
+        User user = userService.getUser(authentication.getName());
+        logger.info("User found: " + user.toString());
 
-        return ResponseEntity.ok().headers(httpHeaders).body(userResponse);
+        boolean verified = user.isVerified();
+        if(!verified) {
+            logger.error("Invalid Request: User is not verified");
+            return new ResponseEntity<>(
+                    "Invalid Request: User is not verified",
+                    httpHeaders,
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        return ResponseEntity.ok().headers(httpHeaders).body(user);
     }
 
     @PutMapping(value = "/v1/user/self", consumes = "application/json")
-    public ResponseEntity<Void> updateUser(@RequestBody Map<String, String> request, Authentication authentication) throws Exception {
+    public ResponseEntity<Object> updateUser(@RequestBody Map<String, String> request, Authentication authentication) throws Exception {
         logger.info("Request body to update user: " + request);
         try {
             User user = userService.getUserByUsername(authentication.getName());
+
+            boolean verified = user.isVerified();
+            if(!verified) {
+                logger.error("Invalid Request: User is not verified");
+                return new ResponseEntity<>(
+                        "Invalid Request: User is not verified",
+                        httpHeaders,
+                        HttpStatus.BAD_REQUEST
+                );
+            }
+
             logger.info("User to be updated: " + user.toString());
             for(Map.Entry<String, String> jsonPair : request.entrySet()) {
                 String key = jsonPair.getKey();
