@@ -8,6 +8,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +46,16 @@ public class UserControllerIntegrationTest {
         assertEquals(201, postResponse.getStatusCode());
         assertEquals(this.userIdentifier + "@example.com", postResponse.getBody().jsonPath().get("username"));
 
+        //set verified to true
+        Instant expirationTime = Instant.now().plus(Duration.ofMinutes(2));
+        //generateToken
+        String verificationToken = Base64.getEncoder().encodeToString((this.userIdentifier + "@example.com").getBytes());
+        String url = "/verify?token=" + verificationToken + "&expires=" + expirationTime.toEpochMilli();
+
+        Response verifyResponse = RestAssured.given()
+                .get(url);
+
+
         Response getResponse = RestAssured.given()
                 .auth().basic(this.userIdentifier + "@example.com", "password")
                 .get("/v1/user/self");
@@ -54,21 +67,44 @@ public class UserControllerIntegrationTest {
     @Test
     public void test2() {
         RestAssured.baseURI = "http://localhost:8080";
+
+        String username = "User" + System.currentTimeMillis()  + "@example.com";
+
         Map<String, String> requestBody = new HashMap<>();
-        requestBody.put("first_name", "UpdatedFirstName");
-        requestBody.put("last_name", "UpdatedLastName");
+        requestBody.put("username", username);
+        requestBody.put("password", "password");
+        requestBody.put("first_name", "Test");
+        requestBody.put("last_name", "User");
+
+        Response postResponse = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .body(requestBody)
+                .post("/v1/user");
+
+        //set verified to true
+        Instant expirationTime = Instant.now().plus(Duration.ofMinutes(2));
+        String verificationToken = Base64.getEncoder().encodeToString(username.getBytes());
+        String url = "/verify?token=" + verificationToken + "&expires=" + expirationTime.toEpochMilli();
+
+        Response verifyResponse = RestAssured.given()
+                .get(url);
+
+
+        Map<String, String> putRequestBody = new HashMap<>();
+        putRequestBody.put("first_name", "UpdatedFirstName");
+        putRequestBody.put("last_name", "UpdatedLastName");
 
         // Send PUT request to update user data
         Response putResponse = RestAssured.given()
-                .auth().basic(this.userIdentifier + "@example.com", "password")
+                .auth().basic(username, "password")
                 .contentType(ContentType.JSON)
-                .body(requestBody)
+                .body(putRequestBody)
                 .put("/v1/user/self");
 
         assertEquals(204, putResponse.getStatusCode());
 
         Response getResponse = RestAssured.given()
-                .auth().basic(this.userIdentifier + "@example.com", "password")
+                .auth().basic(username, "password")
                 .get("/v1/user/self");
 
         assertEquals(200, getResponse.getStatusCode());

@@ -40,9 +40,25 @@ public class User implements UserDetails {
     @Column(nullable = true)
     private LocalDateTime account_updated;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    @JsonIgnore
+    private boolean verified;
+
+    @Column
+    @JsonIgnore
+    private String email_body;
+
+    @Column
+    @JsonIgnore
+    private String verification_link;
+
+    @Column
+    @JsonIgnore
+    private String expiry_time;
+
     public User() { }
 
-    public User(String id, String first_name, String last_name, String password, String username, LocalDateTime account_created, LocalDateTime account_updated) {
+    public User(String id, String first_name, String last_name, String password, String username, LocalDateTime account_created, LocalDateTime account_updated, boolean verified) {
         this.id = id;
         this.first_name = first_name;
         this.last_name = last_name;
@@ -50,6 +66,7 @@ public class User implements UserDetails {
         this.username = username;
         this.account_created = account_created;
         this.account_updated = account_updated;
+        this.verified = verified;
     }
 
     public String getId() {
@@ -106,6 +123,14 @@ public class User implements UserDetails {
 
     public void setAccount_updated(LocalDateTime account_updated) {
         this.account_updated = account_updated;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.cloud.assignment.security;
 
-import com.cloud.assignment.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -13,12 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class AssignmentSecurityConfiguration {
 
-    private final UserService userService;
     private final Logger logger = LoggerFactory.getLogger(AssignmentSecurityConfiguration.class);
-
-    public AssignmentSecurityConfiguration(UserService userService) {
-        this.userService = userService;
-    }
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -31,7 +25,7 @@ public class AssignmentSecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((request) -> request
-                .requestMatchers("/healthz", "/v1/user").permitAll()
+                .requestMatchers("/healthz", "/v1/user", "/verify").permitAll()
                 .anyRequest().authenticated()
         ).httpBasic(Customizer.withDefaults());
         logger.info("Creating SecurityFilterChain bean");
