@@ -76,13 +76,13 @@ jobs:
       - name: Get Instance Key Name
         id: get_instance_key
         run: |
-          INSTANCE_KEY=$(gcloud secrets versions access latest --secret=vmkmscryptokey --format='get(payload.data)' | base64 )
+          INSTANCE_KEY=$(gcloud secrets versions access latest --secret=vmkmscryptokey --format='get(payload.data)' | base64 --decode)
           echo "INSTANCE_KEY=$INSTANCE_KEY" >> $GITHUB_ENV
 
       - name: Get Instance Manager Name
         id: get_instance_manager
         run: |
-          INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 )
+          INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 --decode)
           echo "INSTANCE_MANAGER=$INSTANCE_MANAGER" >> $GITHUB_ENV
 
       - name: Get Metadata startup script
