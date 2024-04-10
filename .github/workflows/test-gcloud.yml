@@ -91,7 +91,7 @@ jobs:
           METADATA=$(gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' | base64 --decode)
           echo "METADATA=$METADATA" >> $GITHUB_ENV
 
-      - name: Create new instance template
+      - name: Create new test instance template
         run: |
           gcloud compute instance-templates create packer-instance-template--${{ github.run_number }} \
             --description="This is the packer instance template" \
