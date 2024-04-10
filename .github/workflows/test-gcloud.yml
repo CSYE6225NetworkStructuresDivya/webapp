@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GCLOUD_CRED: ${{ secrets.GCP_CREDENTIALS }}
-      STARTUP_SCRIPT: ${{ secrets.METADATA_STARTUP_SCRIPT }}
     services:
       mysql:
         image: mysql:latest
@@ -86,19 +85,40 @@ jobs:
           INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 --decode)
           echo "INSTANCE_MANAGER=$INSTANCE_MANAGER" >> $GITHUB_ENV
 
-#      - name: Get Metadata startup script encoded
-#        id: get_metadata
-#        run: |
-#          gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' > encoded.txt
-#
-#      - name: Decode Metadata startup script
-#        id: decode_metadata
-#        run: |
-#          base64 -d encoded.txt > metadata.txt
-#
-      - name : Print Metadata startup script
+      - name: Get Datasource url
+        id: get_datasource_url
         run: |
-          echo "Metadata startup script: ${{ env.STARTUP_SCRIPT }}"
+          DATASOURCE_URL=$(gcloud secrets versions access latest --secret=datasourceurl --format='get(payload.data)' | base64 --decode)
+          echo "DATASOURCE_URL=$DATASOURCE_URL" >> $GITHUB_ENV
+
+      - name: Get Datasource username
+        id: get_datasource_username
+        run: |
+          DATASOURCE_USERNAME=$(gcloud secrets versions access latest --secret=dbuser --format='get(payload.data)' | base64 --decode)
+          echo "DATASOURCE_USERNAME=$DATASOURCE_USERNAME" >> $GITHUB_ENV
+
+      - name: Get Datasource password
+        id: get_datasource_password
+        run: |
+          DATASOURCE_PASSWORD=$(gcloud secrets versions access latest --secret=dbpassword --format='get(payload.data)' | base64 --decode)
+          echo "DATASOURCE_PASSWORD=$DATASOURCE_PASSWORD" >> $GITHUB_ENV
+
+      - name: Get pub-sub topic name
+        id: get_pubsub_topic
+        run: |
+          PUBSUB_TOPIC=$(gcloud secrets versions access latest --secret=pubsubtopicname --format='get(payload.data)' | base64 --decode)
+          echo "PUBSUB_TOPIC=$PUBSUB_TOPIC" >> $GITHUB_ENV
+
+      - name: Print all secrets
+        run: |
+          echo "Image id id $IMAGE_ID"
+          echo "Key ring is $KEY_RING"
+          echo "Instance key is $INSTANCE_KEY"
+          echo "Instance manager is $INSTANCE_MANAGER"
+          echo "Datasource url is $DATASOURCE_URL"
+          echo "Datasource username is $DATASOURCE_USERNAME"
+          echo "Datasource password is $DATASOURCE_PASSWORD"
+          echo "Pubsub topic is $PUBSUB_TOPIC"
 
 
       - name: Create new test instance template
@@ -118,7 +138,27 @@ jobs:
             --service-account=logging-monitoring-sa@cloud-csye-6225.iam.gserviceaccount.com \
             --scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/cloudkms \
             --tags=webapp \
-            --metadata=startup-script=${{ env.STARTUP_SCRIPT }} \
+            --metadata=startup-script='#! /bin/bash
+              if [ ! -f "/opt/csye6225/application.properties" ]; then
+              {
+                echo "spring.jpa.hibernate.ddl-auto=update"
+                echo "spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver"
+                echo "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect"
+                echo "spring.datasource.type=org.springframework.jdbc.datasource.SimpleDriverDataSource"
+                echo "spring.datasource.hikari.connection-timeout=2000"
+                echo "spring.datasource.url=$DATASOURCE_URL"
+                echo "spring.datasource.username=$DATASOURCE_USERNAME"
+                echo "spring.datasource.password=$DATASOURCE_PASSWORD"
+              echo "gcloud_pubsub_topic_id=$PUBSUB_TOPIC"
+              } >> /opt/csye6225/application.properties
+              sudo chown csye6225:csye6225 /opt/csye6225/application.properties
+              sudo chmod 660 /opt/csye6225/application.properties
+              touch /tmp/metadata-test.txt
+              fi'
+
+      - name: Print metadata
+        run: |
+          gcloud compute instance-templates describe packer-instance-template--${{ github.run_number }} --format='get(properties.metadata)'
 
       - name: Create new instance group
         run: |
