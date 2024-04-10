@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GCLOUD_CRED: ${{ secrets.GCP_CREDENTIALS }}
+      STARTUP_SCRIPT: ${{ secrets.METADATA_STARTUP_SCRIPT }}
     services:
       mysql:
         image: mysql:latest
@@ -85,19 +86,19 @@ jobs:
           INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 --decode)
           echo "INSTANCE_MANAGER=$INSTANCE_MANAGER" >> $GITHUB_ENV
 
-      - name: Get Metadata startup script encoded
-        id: get_metadata
-        run: |
-          gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' > encoded.txt
-
-      - name: Decode Metadata startup script
-        id: decode_metadata
-        run: |
-          base64 -d encoded.txt > metadata.txt
-
+#      - name: Get Metadata startup script encoded
+#        id: get_metadata
+#        run: |
+#          gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' > encoded.txt
+#
+#      - name: Decode Metadata startup script
+#        id: decode_metadata
+#        run: |
+#          base64 -d encoded.txt > metadata.txt
+#
       - name : Print Metadata startup script
         run: |
-          cat metadata.txt
+          echo "Metadata startup script: ${{ env.STARTUP_SCRIPT }}"
 
 
       - name: Create new test instance template
@@ -117,7 +118,7 @@ jobs:
             --service-account=logging-monitoring-sa@cloud-csye-6225.iam.gserviceaccount.com \
             --scopes=https://www.googleapis.com/auth/logging.write,https://www.googleapis.com/auth/monitoring,https://www.googleapis.com/auth/pubsub,https://www.googleapis.com/auth/cloudkms \
             --tags=webapp \
-            --metadata-from-file=startup-script=metadata.txt \
+            --metadata=startup-script=${{ env.STARTUP_SCRIPT }} \
 
       - name: Create new instance group
         run: |
