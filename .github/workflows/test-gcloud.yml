@@ -1,17 +1,12 @@
-name: Create Machine Image
+name: Test GCloud
 on:
   pull_request:
-    types:
-      - closed
     branches:
       - main
   workflow_dispatch:
-env:
-  PRODUCT_VERSION: "latest"
 
 jobs:
-  build-and-deploy:
-    if: github.event.pull_request.merged == true
+  test-gcloud:
     runs-on: ubuntu-latest
     env:
       GCLOUD_CRED: ${{ secrets.GCP_CREDENTIALS }}
@@ -86,14 +81,14 @@ jobs:
         run: |
           INSTANCE_KEY=$(gcloud secrets versions access latest --secret=vmkmscryptokey --format='get(payload.data)' | base64 )
           echo "INSTANCE_KEY=$INSTANCE_KEY" >> $GITHUB_ENV
-      
+
       - name: Get Instance Manager Name
         id: get_instance_manager
         run: |
           INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 )
           echo "INSTANCE_MANAGER=$INSTANCE_MANAGER" >> $GITHUB_ENV
 
-      - name : Get Metadata startup script
+      - name: Get Metadata startup script
         id: get_metadata
         run: |
           METADATA=$(gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' | base64 --decode)
