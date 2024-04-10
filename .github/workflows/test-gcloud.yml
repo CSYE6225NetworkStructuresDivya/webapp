@@ -85,10 +85,19 @@ jobs:
           INSTANCE_MANAGER=$(gcloud secrets versions access latest --secret=instancemanagername --format='get(payload.data)' | base64 --decode)
           echo "INSTANCE_MANAGER=$INSTANCE_MANAGER" >> $GITHUB_ENV
 
-      - name: Get Metadata startup script
+      - name: Get Metadata startup script encoded
         id: get_metadata
         run: |
-          gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' | base64 --decode > metadata.txt
+          gcloud secrets versions access latest --secret=metadatastartupscript --format='get(payload.data)' > encoded.txt
+
+      - name: Decode Metadata startup script
+        id: decode_metadata
+        run: |
+          base64 -d encoded.txt > metadata.txt
+
+      - name : Print Metadata startup script
+        run: |
+          cat metadata.txt
 
 
       - name: Create new test instance template
