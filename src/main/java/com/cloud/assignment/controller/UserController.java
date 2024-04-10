@@ -142,7 +142,7 @@ public class UserController {
             return new ResponseEntity<>(
                     "Invalid Request: User is not verified",
                     httpHeaders,
-                    HttpStatus.BAD_REQUEST
+                    HttpStatus.FORBIDDEN
             );
         }
 
@@ -161,7 +161,7 @@ public class UserController {
                 return new ResponseEntity<>(
                         "Invalid Request: User is not verified",
                         httpHeaders,
-                        HttpStatus.BAD_REQUEST
+                        HttpStatus.FORBIDDEN
                 );
             }
 
