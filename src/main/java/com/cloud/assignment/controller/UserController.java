@@ -42,7 +42,7 @@ public class UserController {
         logger.info("UserController initialized");
     }
 
-    @PostMapping(value = "/v1/user", consumes = "application/json")
+    @PostMapping(value = "/v20/user", consumes = "application/json")
     public ResponseEntity<Object> createUser(@RequestBody Map<String, String> request) throws Exception{
         logger.info("Request body to create user: " + request);
         try {
@@ -117,7 +117,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/v1/user/self")
+    @GetMapping("/v20/user/self")
     public ResponseEntity<Object> getUser(Authentication authentication,
                                           HttpServletRequest httpServletRequest,
                                           @RequestParam Map<String, String> params) {
@@ -149,7 +149,7 @@ public class UserController {
         return ResponseEntity.ok().headers(httpHeaders).body(user);
     }
 
-    @PutMapping(value = "/v1/user/self", consumes = "application/json")
+    @PutMapping(value = "/v20/user/self", consumes = "application/json")
     public ResponseEntity<Object> updateUser(@RequestBody Map<String, String> request, Authentication authentication) throws Exception {
         logger.info("Request body to update user: " + request);
         try {
