@@ -41,7 +41,7 @@ public class UserControllerIntegrationTest {
         Response postResponse = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
-                .post("/v1/user");
+                .post("/v20/user");
 
         assertEquals(201, postResponse.getStatusCode());
         assertEquals(this.userIdentifier + "@example.com", postResponse.getBody().jsonPath().get("username"));
@@ -58,7 +58,7 @@ public class UserControllerIntegrationTest {
 
         Response getResponse = RestAssured.given()
                 .auth().basic(this.userIdentifier + "@example.com", "password")
-                .get("/v1/user/self");
+                .get("/v20/user/self");
 
         assertEquals(200, getResponse.getStatusCode());
         assertEquals(this.userIdentifier + "@example.com", getResponse.getBody().jsonPath().get("username"));
@@ -79,7 +79,7 @@ public class UserControllerIntegrationTest {
         Response postResponse = RestAssured.given()
                 .contentType(ContentType.JSON)
                 .body(requestBody)
-                .post("/v1/user");
+                .post("/v20/user");
 
         //set verified to true
         Instant expirationTime = Instant.now().plus(Duration.ofMinutes(2));
@@ -99,13 +99,13 @@ public class UserControllerIntegrationTest {
                 .auth().basic(username, "password")
                 .contentType(ContentType.JSON)
                 .body(putRequestBody)
-                .put("/v1/user/self");
+                .put("/v20/user/self");
 
         assertEquals(204, putResponse.getStatusCode());
 
         Response getResponse = RestAssured.given()
                 .auth().basic(username, "password")
-                .get("/v1/user/self");
+                .get("/v20/user/self");
 
         assertEquals(200, getResponse.getStatusCode());
         assertEquals("UpdatedFirstName", getResponse.getBody().jsonPath().get("first_name"));
