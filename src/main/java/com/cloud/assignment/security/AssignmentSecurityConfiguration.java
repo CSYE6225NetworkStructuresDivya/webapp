@@ -25,7 +25,7 @@ public class AssignmentSecurityConfiguration {
         httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((request) -> request
-                .requestMatchers("/healthz", "/v1/user", "/verify").permitAll()
+                .requestMatchers("/healthz", "/v20/user", "/verify").permitAll()
                 .anyRequest().authenticated()
         ).httpBasic(Customizer.withDefaults());
         logger.info("Creating SecurityFilterChain bean");
